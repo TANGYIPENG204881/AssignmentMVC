@@ -1,0 +1,110 @@
+package assignment1;
+
+import java.sql.*; 
+import java.util.Scanner;
+public class student {
+
+	public static void main(String[] args) throws SQLException { 
+		// Connect to database
+		try {
+		Connection conn = null;
+		PreparedStatement s=null;
+		ResultSet rs = null;
+
+		conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/db1?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=false",
+        "root","" );	
+	
+System.out.println("You accessed your database successfully");
+System.out.println("Add data to the database ，Press 1;  Search id from database，Press 2");
+Scanner scanner = new Scanner(System.in);
+
+System.out.print("Enter your choice:");
+String a = scanner.nextLine();
+
+if(a.equals ("1") ) {
+System.out.println("Insert the data to the table student's properties");
+	
+System.out.print("Enter the student's Id: ");
+
+String id = scanner.nextLine();
+
+System.out.print("Enter the student's Name: ");
+String name = scanner.nextLine();
+
+System.out.print("Enter the student's MathMark: ");
+String math_mark = scanner.nextLine();
+
+System.out.print("Enter the student's ScienceMark: ");
+String science_mark = scanner.nextLine();
+
+//检索对象和数据库语句
+String sql="Insert into student"+"(id ,name ,Math_mark ,Science_mark )"+"Values(?,?,?,?)";
+s = conn.prepareStatement(sql);
+s.setString(1, id);
+s.setString(2, name);
+s.setString(3, math_mark);
+s.setString(4, science_mark);
+s.executeUpdate();
+
+
+//从表中检索结果
+         rs = s.executeQuery ("Select * from student"); 
+// Print columns headers
+ResultSetMetaData rsmd =rs.getMetaData(); 
+int i =rsmd.getColumnCount( );
+
+for(int j=1; j<=i; j++) { 
+ System.out.print(rsmd.getColumnName(j)+"\t"+"\t"); 
+ System.out.print(""); 
+} 
+System.out.print("\n");
+
+// 显示结果
+
+while(rs.next( ) ) { 
+      for(int j=1; j<=i; j++) { 
+      System.out.print (rs.getString( j)+"\t"+"\t"+"\t"); 
+      System.out.print(""); 
+ }
+ System.out.print("\n");
+}
+
+}
+else if(a.equals("2")) {
+ System.out.println("Search the studentId to the table student's properties");
+ System.out.print("Please enter the student's id: ");
+ String id = scanner.nextLine();
+ String sql = "select * from student where id like ?";
+ s = conn.prepareStatement(sql);
+ s.setString(1, id);
+  rs = s.executeQuery();
+
+
+  System.out.println(" ");
+  System.out.println("--------------------------------------------------------------");
+	System.out.println(" ");
+	System.out.println(" ");
+	System.out.println("ID" + "\t\t" + "Name" + "\t\t" + "MathMark" + "\t\t" + "ScienceMark");
+	System.out.println("---------------------------------------------------------------------");
+         //条件检查使用next()方法
+	
+         if (rs.next()) {
+             int id1 = rs.getInt("id");
+             String name = rs.getString("name");
+             String math_mark = rs.getString("Math_mark");
+             String  science_mark = rs.getString("Science_mark");
+             
+             
+           
+             System.out.println(id + "\t\t" + name + "\t\t" + math_mark + "\t\t\t" + science_mark);
+ 		}
+
+}
+
+	 }
+	  catch (Exception e) {
+	   e.printStackTrace();
+	  }
+	  
+	 }
+	}
